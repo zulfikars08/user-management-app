@@ -515,9 +515,9 @@
                         "format": "email"
                     },
                     "password": {
+                        "description": "Omit to keep the existing password.",
                         "type": "string",
                         "format": "password",
-                        "nullable": true,
                         "minLength": 8
                     },
                     "role": {

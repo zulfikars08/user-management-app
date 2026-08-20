@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createUser, deleteUser, getUsers, updateUser } from '../api/usersApi'
 import { apiError } from '../api/errorMessage'
@@ -30,6 +30,7 @@ export default function UsersPage() {
   const [deleting, setDeleting] = useState(null)
   const [busy, setBusy] = useState(false)
   const [formErrors, setFormErrors] = useState({})
+  const requestId = useRef(0)
   const canManageUsers = user.role === 'admin'
 
   const handleError = useCallback((requestError) => {
@@ -40,13 +41,19 @@ export default function UsersPage() {
   }, [clearSession, navigate])
 
   const loadUsers = useCallback(async () => {
+    const currentRequest = ++requestId.current
     setLoading(true); setError('')
     try {
       const { data } = await getUsers({ page, per_page: 10, ...(search && { search }) })
+      if (currentRequest !== requestId.current) return
       setUsers(data.data)
       setPagination({ currentPage: data.meta.current_page, lastPage: data.meta.last_page, perPage: data.meta.per_page, total: data.meta.total })
       if (!data.data.length && page > 1) setPage(page - 1)
-    } catch (requestError) { handleError(requestError) } finally { setLoading(false) }
+    } catch (requestError) {
+      if (currentRequest === requestId.current) handleError(requestError)
+    } finally {
+      if (currentRequest === requestId.current) setLoading(false)
+    }
   }, [page, search, handleError])
 
   // oxlint-disable-next-line react-hooks/set-state-in-effect -- API synchronization belongs to route state changes
@@ -60,8 +67,10 @@ export default function UsersPage() {
     setBusy(true); setFormErrors({}); setError('')
     try {
       if (editing) { await updateUser(editing.id, payload); setSuccess('User updated successfully.') }
-      else { await createUser(payload); setSuccess('User created successfully.'); setPage(1) }
-      setFormOpen(false); await loadUsers()
+      else { await createUser(payload); setSuccess('User created successfully.') }
+      setFormOpen(false)
+      if (!editing && page !== 1) setPage(1)
+      else await loadUsers()
     } catch (requestError) { const parsed = handleError(requestError); setFormErrors(parsed.errors) } finally { setBusy(false) }
   }
   const confirmDelete = async () => {

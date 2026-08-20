@@ -17,7 +17,7 @@ Initial full-stack project foundation for a user management web application.
 
 ## Status
 
-Backend User REST API, Sanctum token authentication, and role authorization complete. React interface and Swagger documentation are not implemented yet.
+React user-management interface, Laravel API, MySQL persistence, Sanctum authentication, and role authorization are complete. Swagger documentation and deployment are not implemented yet.
 
 ## User REST API
 
@@ -44,7 +44,39 @@ Search with `?search=<name-or-id>` and paginate with `?page=1&per_page=10` (`per
 | Update user | Yes | No |
 | Delete user | Yes | No |
 
-Unauthenticated requests receive HTTP 401. Authenticated users without required role receive HTTP 403. Public registration and frontend authentication are not implemented.
+Unauthenticated requests receive HTTP 401. Authenticated users without required role receive HTTP 403. Public registration is not implemented.
+
+## Frontend
+
+Stack: React, Vite, React Router, Axios, and Bootstrap. The responsive interface includes login, session restoration, protected routing, role-aware CRUD controls, backend search by name or ID, server pagination, loading states, and visible API error handling.
+
+Local URLs:
+
+```text
+Frontend: http://localhost:5173
+Backend:  http://127.0.0.1:8000
+```
+
+Run backend:
+
+```bash
+cd backend
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Run frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Copy `frontend/.env.example` to `frontend/.env` when local API URL differs. Vite environment variables are client-visible and must not contain secrets.
+
+## Coding Test Requirement Mapping
+
+`frontend/src/pages/UsersPage.jsx` is parent component. It passes real list state and callbacks to child components including `SearchBar`, `UserTable`, `UserFormModal`, `DeleteConfirmModal`, `PaginationControls`, `ErrorAlert`, and `LoadingState`. Props include `users`, `canManageUsers`, `onEdit`, `onDelete`, search callbacks, mutation callbacks, and pagination callbacks. Axios retrieves server-paginated records from `GET /api/users`.
 
 ## Database Setup
 

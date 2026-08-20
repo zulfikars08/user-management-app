@@ -1,0 +1,35 @@
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
+# Dependencies
+backend/vendor/
+frontend/node_modules/
+node_modules/
+
+# Generated output and caches
+frontend/dist/
+backend/bootstrap/cache/*.php
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+coverage/
+*.log
+npm-debug.log*
+
+# Local databases
+*.sqlite
+*.sqlite-journal
+
+# IDE, editor, and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini

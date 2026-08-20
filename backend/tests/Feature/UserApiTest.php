@@ -17,6 +17,7 @@ class UserApiTest extends TestCase
     {
         parent::setUp();
 
+        User::query()->delete();
         Sanctum::actingAs(User::factory()->make(['role' => 'admin']));
     }
 

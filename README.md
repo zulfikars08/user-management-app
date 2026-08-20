@@ -17,7 +17,7 @@ Initial full-stack project foundation for a user management web application.
 
 ## Status
 
-React user-management interface, Laravel API, MySQL persistence, Sanctum authentication, and role authorization are complete. Swagger documentation and deployment are not implemented yet.
+React user-management interface, Laravel API, MySQL persistence, Sanctum authentication, role authorization, and Swagger documentation are complete. Deployment is not implemented.
 
 ## User REST API
 
@@ -74,9 +74,57 @@ npm run dev
 
 Copy `frontend/.env.example` to `frontend/.env` when local API URL differs. Vite environment variables are client-visible and must not contain secrets.
 
+## API Documentation
+
+Generate Swagger after backend dependencies are installed:
+
+```bash
+cd backend
+php artisan l5-swagger:generate
+```
+
+With Laravel running, open `http://127.0.0.1:8000/api/documentation`. Protected operations use Swagger UI's **Authorize** control with a Sanctum Bearer token. Never store that token in project files.
+
+## Demo Users
+
+Set local passwords in ignored `backend/.env`; empty passwords are rejected:
+
+```text
+DEMO_ADMIN_EMAIL=admin@user-management.test
+DEMO_ADMIN_PASSWORD=
+DEMO_USER_EMAIL=user@user-management.test
+DEMO_USER_PASSWORD=
+```
+
+Run the idempotent seeder:
+
+```bash
+cd backend
+php artisan db:seed --class=DemoUserSeeder
+```
+
+The seeder updates only these two identities, assigns `admin` and `user` roles, and never truncates unrelated users.
+
 ## Coding Test Requirement Mapping
 
 `frontend/src/pages/UsersPage.jsx` is parent component. It passes real list state and callbacks to child components including `SearchBar`, `UserTable`, `UserFormModal`, `DeleteConfirmModal`, `PaginationControls`, `ErrorAlert`, and `LoadingState`. Props include `users`, `canManageUsers`, `onEdit`, `onDelete`, search callbacks, mutation callbacks, and pagination callbacks. Axios retrieves server-paginated records from `GET /api/users`.
+
+| Requirement | Implementation |
+| --- | --- |
+| CRUD | `UserController.php`, `UsersPage.jsx`, form/delete children |
+| MySQL | Laravel MySQL configuration and migrations |
+| React + Laravel | `frontend/`, `backend/` |
+| CSS framework | Bootstrap 5 |
+| Responsive layout | `ResponsiveLayout.jsx`, `frontend/src/index.css` |
+| Swagger | `OpenApiSpec.php`, `/api/documentation` |
+| Login | `LoginPage.jsx`, `POST /api/login` |
+| Authentication/validation | Sanctum, Form Requests, frontend errors |
+| Filter | Name/numeric-ID API search and `SearchBar` |
+| Pagination | Laravel paginator and `PaginationControls` |
+| Parent-child props | `UsersPage` and real child components |
+| API fetch | Shared Axios client |
+| Global exceptions | `backend/bootstrap/app.php` |
+| Role security | `auth:sanctum`, `EnsureUserHasRole` |
 
 ## Database Setup
 

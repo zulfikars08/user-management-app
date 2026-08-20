@@ -5,11 +5,20 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
     use DatabaseTransactions;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        PersonalAccessToken::query()->delete();
+        User::query()->delete();
+    }
 
     private function user(string $role = 'user'): User
     {
@@ -105,7 +114,9 @@ class AuthenticationTest extends TestCase
         $this->withHeaders($headers)->postJson('/api/logout')->assertOk();
         $this->refreshApplication();
         $this->withHeaders($headers)->getJson('/api/me')->assertUnauthorized();
-        $this->assertDatabaseCount('personal_access_tokens', 0);
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'token' => hash('sha256', explode('|', $token, 2)[1]),
+        ]);
     }
 
     public function test_authenticated_regressions_and_missing_user_still_work(): void

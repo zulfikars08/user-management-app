@@ -18,3 +18,13 @@ Initial full-stack project foundation for a user management web application.
 ## Status
 
 Initial setup.
+
+## Database Setup
+
+MySQL is the active backend database. Create the `user_management_app` database, copy `backend/.env.example` to `backend/.env`, and place local database credentials only in `backend/.env`. The example file contains placeholders only.
+
+Run migrations from `backend/`:
+
+```bash
+php artisan migrate
+```

@@ -17,7 +17,7 @@ Initial full-stack project foundation for a user management web application.
 
 ## Status
 
-Backend User REST API complete. Authentication, authorization, React interface, and Swagger documentation are not implemented yet.
+Backend User REST API, Sanctum token authentication, and role authorization complete. React interface and Swagger documentation are not implemented yet.
 
 ## User REST API
 
@@ -32,6 +32,19 @@ Laravel exposes unprotected foundation routes under `/api/users` for CRUD, name/
 | DELETE | `/api/users/{user}` | Delete user |
 
 Search with `?search=<name-or-id>` and paginate with `?page=1&per_page=10` (`per_page` maximum: 100).
+
+## Authentication and Authorization
+
+`POST /api/login` returns a Sanctum Bearer token. `GET /api/me` and `POST /api/logout` require that token. Login is limited to five attempts per minute. All user routes require authentication.
+
+| Action | Admin | User |
+| --- | --- | --- |
+| View users | Yes | Yes |
+| Create user | Yes | No |
+| Update user | Yes | No |
+| Delete user | Yes | No |
+
+Unauthenticated requests receive HTTP 401. Authenticated users without required role receive HTTP 403. Public registration and frontend authentication are not implemented.
 
 ## Database Setup
 

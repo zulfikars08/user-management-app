@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -19,7 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'role' => EnsureUserHasRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $json = fn (Request $request): bool => $request->is('api/*');
@@ -30,7 +34,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 || $exception instanceof ModelNotFoundException
                 || $exception instanceof NotFoundHttpException
                 || $exception instanceof AuthenticationException
-                || $exception instanceof AuthorizationException) {
+                || $exception instanceof AuthorizationException
+                || $exception instanceof AccessDeniedHttpException) {
                 return null;
             }
 
@@ -76,6 +81,14 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (AuthorizationException $exception, Request $request) use ($json) {
+            return $json($request) ? response()->json([
+                'success' => false,
+                'message' => 'Forbidden.',
+                'errors' => null,
+            ], Response::HTTP_FORBIDDEN) : null;
+        });
+
+        $exceptions->render(function (AccessDeniedHttpException $exception, Request $request) use ($json) {
             return $json($request) ? response()->json([
                 'success' => false,
                 'message' => 'Forbidden.',

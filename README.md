@@ -17,7 +17,21 @@ Initial full-stack project foundation for a user management web application.
 
 ## Status
 
-Initial setup.
+Backend User REST API complete. Authentication, authorization, React interface, and Swagger documentation are not implemented yet.
+
+## User REST API
+
+Laravel exposes unprotected foundation routes under `/api/users` for CRUD, name/ID search, and server-side pagination. Requests use dedicated create/update validation and consistent JSON error responses. Authentication and role authorization will be added in Step 5.
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/api/users` | List, search, and paginate users |
+| POST | `/api/users` | Create user |
+| GET | `/api/users/{user}` | Show user |
+| PUT/PATCH | `/api/users/{user}` | Update user |
+| DELETE | `/api/users/{user}` | Delete user |
+
+Search with `?search=<name-or-id>` and paginate with `?page=1&per_page=10` (`per_page` maximum: 100).
 
 ## Database Setup
 

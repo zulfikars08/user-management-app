@@ -73,13 +73,13 @@ DEMO_USER_EMAIL=user@user-management.test
 DEMO_USER_PASSWORD=
 ```
 
-Create or update only these identities:
+Seed two documented login identities plus thirteen fictional directory records for list, search, role-badge, and pagination demonstrations:
 
 ```bash
 php artisan db:seed --class=DemoUserSeeder
 ```
 
-Seeder is idempotent and rejects empty passwords.
+Seeder is idempotent and rejects empty login passwords. Additional directory records receive generated passwords only when first created; they are not documented login accounts.
 
 ## Frontend Setup
 

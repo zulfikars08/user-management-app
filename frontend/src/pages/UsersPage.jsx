@@ -9,6 +9,7 @@ import PaginationControls from '../components/PaginationControls'
 import ResponsiveLayout from '../components/ResponsiveLayout'
 import SearchBar from '../components/SearchBar'
 import UserFormModal from '../components/UserFormModal'
+import UserSummary from '../components/UserSummary'
 import UserTable from '../components/UserTable'
 import { useAuth } from '../context/useAuth'
 
@@ -79,9 +80,10 @@ export default function UsersPage() {
     catch (requestError) { handleError(requestError) } finally { setBusy(false) }
   }
 
-  return <ResponsiveLayout><div className="page-heading"><div><span className="eyebrow">Directory</span><h1>Users</h1><p>Search, review, and maintain account access.</p></div>{canManageUsers && <button className="btn btn-primary" onClick={openCreate}>Add user</button>}</div>
+  return <ResponsiveLayout><div className="page-heading"><div><span className="eyebrow">Directory</span><h1>Users</h1><p>Search, review, and manage account access.</p></div>{canManageUsers && <button className="btn btn-primary" onClick={openCreate}>Add user</button>}</div>
     {success && <div className="alert alert-success alert-dismissible" role="status">{success}<button className="btn-close" onClick={() => setSuccess('')} aria-label="Dismiss success" /></div>}
     <ErrorAlert message={error} onDismiss={() => setError('')} />
+    <UserSummary total={pagination.total} currentPage={pagination.currentPage} lastPage={pagination.lastPage} role={user.role} />
     <section className="content-card"><div className="card-toolbar"><SearchBar search={searchInput} onSearchChange={setSearchInput} onSubmit={submitSearch} onReset={resetSearch} /></div>{loading ? <LoadingState label="Loading users…" /> : <UserTable users={users} canManageUsers={canManageUsers} onEdit={openEdit} onDelete={setDeleting} />}<PaginationControls currentPage={pagination.currentPage} lastPage={pagination.lastPage} total={pagination.total} onPageChange={setPage} /></section>
     <UserFormModal user={editing} open={formOpen} busy={busy} apiErrors={formErrors} onSubmit={saveUser} onClose={() => setFormOpen(false)} />
     <DeleteConfirmModal user={deleting} busy={busy} onConfirm={confirmDelete} onClose={() => setDeleting(null)} />

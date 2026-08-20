@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class DemoUserSeeder extends Seeder
@@ -27,5 +28,28 @@ class DemoUserSeeder extends Seeder
             ['email' => env('DEMO_USER_EMAIL', 'user@user-management.test')],
             ['name' => 'Demo User', 'password' => $userPassword, 'role' => 'user'],
         );
+
+        $directoryUsers = [
+            ['Amanda Wijaya', 'amanda.wijaya@demo.test', 'user'],
+            ['Bima Pratama', 'bima.pratama@demo.test', 'user'],
+            ['Citra Lestari', 'citra.lestari@demo.test', 'admin'],
+            ['Dimas Saputra', 'dimas.saputra@demo.test', 'user'],
+            ['Farah Maharani', 'farah.maharani@demo.test', 'user'],
+            ['Galang Putra', 'galang.putra@demo.test', 'user'],
+            ['Intan Permata', 'intan.permata@demo.test', 'admin'],
+            ['Kevin Santoso', 'kevin.santoso@demo.test', 'user'],
+            ['Nadia Rahma', 'nadia.rahma@demo.test', 'user'],
+            ['Raka Mahendra', 'raka.mahendra@demo.test', 'user'],
+            ['Salsa Putri', 'salsa.putri@demo.test', 'user'],
+            ['Taufik Hidayat', 'taufik.hidayat@demo.test', 'admin'],
+            ['Vina Amelia', 'vina.amelia@demo.test', 'user'],
+        ];
+
+        foreach ($directoryUsers as [$name, $email, $role]) {
+            User::firstOrCreate(
+                ['email' => $email],
+                ['name' => $name, 'password' => Str::random(40), 'role' => $role],
+            );
+        }
     }
 }
